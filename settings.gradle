@@ -12,6 +12,9 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
+
+
 rootProject.name = "ComponentialDemo"
 include ':app'
 include ':commonl'
+include ':goodsmodule'
