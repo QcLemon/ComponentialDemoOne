@@ -1,19 +1,29 @@
 plugins {
-    id 'com.android.application'
+    id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+ //   id 'maven-publish'
 }
 
 android {
     compileSdk 32
 
     defaultConfig {
-        applicationId "com.example.commonl"
+        if (isRelease) {
+            applicationId "com.example.commonl"
+        }
         minSdk 22
         targetSdk 32
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
+
+        // 省略其他部分
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [ moduleName : project.getName() ]
+            }
+        }
     }
 
     buildTypes {
@@ -21,13 +31,45 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
     kotlinOptions {
         jvmTarget = '1.8'
+    }
+
+    sourceSets {
+        main {
+            if (isRelease) {
+                //独立运行
+                manifest.srcFile 'src/main/AndroidManifest.xml'
+                // 指定源码目录
+//                java.srcDir 'src/main/java'
+//                java.srcDir 'src/main/alone'
+            } else {
+                //合并到宿主
+                manifest.srcFile 'src/main/manifest/AndroidManifest.xml'
+                //指定源码目录
+            //    java.srcDir 'src/main/java'
+                //不想包含的文件路径
+             //   java.exclude 'src/main/alone'
+                resources {
+                    //正式版本时，排除manifest文件夹下所有调试文件
+                  //  exclude 'src/main/*'
+                    //指定源码目录
+                 //   java.srcDir 'src/main/java'
+                    //不想包含的文件路径
+              //      java.exclude 'src/main/alone'
+                }
+            }
+        }
     }
 }
 
@@ -40,4 +82,49 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
+    // ARouter路由器框架
+    api 'com.alibaba:arouter-api:1.5.2'
+    annotationProcessor 'com.alibaba:arouter-compiler:1.5.2'
+  //  api "${rootProject.ext.arch.libraryHttp}"
+    api 'com.contrarywind:Android-PickerView:4.1.9'
 }
+
+////上传源码对应的task
+//task generateSourcesJar(type: Jar) {
+//    from android.sourceSets.main.java.getSrcDirs() // 源码路径
+//    archiveClassifier= "sources"
+//}
+//
+//def versionName = "1.0.1"
+//
+//afterEvaluate{
+//    publishing{
+//        repositories {
+//            maven{
+//                //自定义本地仓库
+//                url="D://ASTestApp//ComponentialDemo//repository"
+//            }
+////        // 定义一个 maven 仓库
+////        maven {
+////            //在这里放远程仓库地址
+////            url = "https://xxxxxxxx"
+////            // 仓库用户名密码
+////            credentials {
+////                username = "root"
+////                password = "root"
+////            }
+////        }
+//        }
+//        publications{
+//            maven(MavenPublication) {
+//                //这个 components 表示 library构建成功后对应的Android组件
+//                from components.release
+//                artifact generateSourcesJar // 上传源码
+//                groupId =  "com.lcm.library"
+//                artifactId = "mylibraryone"
+//                version = versionName
+//            }
+//        }
+//    }
+//}

@@ -3,49 +3,204 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
+def androidId = rootProject.ext.androidId
+def support = rootProject.ext.dependencies
+def test = rootProject.ext.dependenciesTest
+def appId = rootProject.ext.appId
+def url = rootProject.ext.url
+def signing = rootProject.ext.signing
+
 android {
-    compileSdk 32
+    compileSdkVersion androidId.compileSdkVersion
+    buildToolsVersion androidId.buildToolsVersion
 
     defaultConfig {
-        applicationId "com.example.componentialdemo"
-        minSdk 22
-        targetSdk 32
-        versionCode 1
-        versionName "1.0"
+        applicationId appId.app
+        minSdkVersion androidId.minSdkVersion
+        targetSdkVersion androidId.targetSdkVersion
+        versionCode androidId.versionCode
+        versionName androidId.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        multiDexEnabled true
+
+        //manifestPlaceholders = [manifestApplicationId: "com.example.componentialdemo"]
+
+        // 省略其他部分
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [moduleName: project.getName()]
+            }
+        }
+
+    }
+
+//    sourceSets {
+////        main {
+////            manifest.srcFile "src/main/AndroidManifest.xml"
+////            // 添加以下代码
+////            java.srcDirs = ['src/main/java', 'src/main/otherjava']
+////            resources.srcDirs = ['src/main/resources', 'src/main/otherresources']
+////            aidl.srcDirs = ['src/main/aidl', 'src/main/otheraidl']
+////            res.srcDirs = ['src/main/res', 'src/main/otherres']
+////            resources {
+////                //正式版本时，排除manifest文件夹下所有调试文件
+////                exclude 'src/main/*'
+////            }
+////        }
+////        main {
+////            if (isDefaultLib) {
+////                //独立运行
+////                manifest.srcFile 'src/main/manifest/AndroidManifest.xml'
+////            } else {
+////                //合并到宿主
+////                manifest.srcFile 'src/main/AndroidManifest.xml'
+////                resources {
+////                    //正式版本时，排除manifest文件夹下所有调试文件
+////                    exclude 'src/main/manifest/*'
+////                }
+////            }
+////        }
+//    }
+//    applicationVariants.all { variant ->
+//        variant.outputs.all {
+//            outputFileName = "commonl-${variant.buildType.name}-${variant.versionName}.apk"
+//        }
+//    }
+
+    signingConfigs {
+        debug {
+            //签名证书文件
+            storeFile file(signing.storeFile)
+            //签名证书文件密码
+            storePassword signing.storePassword
+            //签名证书中密钥别名
+            keyAlias signing.keyAlias
+            //签名证书中该密钥的密码
+            keyPassword signing.keyPassword
+            // 如果要支持最新版的系统 Android 7.0
+            // 这一行必须加，否则安装时会提示没有签名
+            // 作用是只使用旧版签名，禁用V2版签名模式
+            v2SigningEnabled true
+        }
+
+        release {
+            //签名证书文件
+            storeFile file(signing.storeFile)
+            //签名证书文件密码
+            storePassword signing.storePassword
+            //签名证书中密钥别名
+            keyAlias signing.keyAlias
+            //签名证书中该密钥的密码
+            keyPassword signing.keyPassword
+            // 如果要支持最新版的系统 Android 7.0
+            // 这一行必须加，否则安装时会提示没有签名
+            // 作用是只使用旧版签名，禁用V2版签名模式
+            v2SigningEnabled true
+        }
+
     }
 
     buildTypes {
-        release {
+        debug {
+            debuggable true
             minifyEnabled false
+            signingConfig signingConfigs.debug
+            zipAlignEnabled true
+            buildConfigField("String", "debug", "\"${url.debug}\"")
+        }
+        release {
+            debuggable true
+            minifyEnabled false
+            signingConfig signingConfigs.release
+            zipAlignEnabled true
+            buildConfigField("String", "debug", "\"${url.release}\"")
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    buildFeatures {
+        // Enables support for Java 8 in your project's build.gradle
+        // For  more information, see https://developer.android.com/studio/write/java8-support
+        viewBinding true
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
-    buildFeatures {
-        viewBinding true
-    }
-}
 
-//afterEvaluate {
-//    task zip(type : zip) {
-////        archiveName "outputs2.zip"// 输出的文件名字
-////        destinationDir file("${buildDir}/custom")// 输出的文件存放的文件夹
-////        from tasks.getByName("packageDebug").outputs.files// 输入的文件
-////        tasks.getByName("packageDebug").outputs.files.each {
-////            println it
-////        }
+
+
+    // AdbOptions 可以对 adb 操作选项添加配置
+    adbOptions {
+        // 配置操作超时时间，单位毫秒
+        timeOutInMs = 5 * 1000_0
+
+        // adb install 命令的选项配置
+        installOptions '-r', '-s'
+    }
+    // adb的操作选项
+//    adbOptions {
+//        installOptions '-r', '-s','-d'
+//        //-l, -t, -d, -g
+//        // -d 允许降级安装
+//        // -g 为应有获取所有运行时的权限
+//
+//        // adb install有 l, r, t, s, d, g 这6个选项。
+//        // -l: 锁定该应用程序
+//        // -r: 替换已经存在的应用程序，强制安装
+//        // -t: 允许测试包
+//        // -s: 把应用装到sd卡上
+//        // -d: 允许进行降级安装，也就是应用的版本比手机上的版本低
+//        // -g: 为该应用授予所有运行时的权限
+//    }
+
+
+    // 对 dx 操作的配置，接受一个 DexOptions 类型的闭包，配置由 DexOptions 提供
+//    dexOptions {
+//        // 配置执行 dx 命令是为其分配的最大堆内存
+//        javaMaxHeapSize "4g"
+//        // 配置是否预执行 dex Libraries 工程，开启后会提高增量构建速度，不过会影响 clean 构建的速度，默认 true
+//        preDexLibraries = false
+//        // 配置是否开启 jumbo 模式，代码方法是超过 65535 需要强制开启才能构建成功
+//        jumboMode true
+//        // 配置 Gradle 运行 dx 命令时使用的线程数量
+//        threadCount 8
+//        // 配置multidex参数
+//        additionalParameters = [
+//                '--multi-dex', // 多dex分包
+//                '--set-max-idx-number=50000', // 每个包内方法数上限
+//                // '--main-dex-list=' + '/multidex-config.txt', // 打包到主classes.dex的文件列表
+//                '--minimal-main-dex'
+//        ]
+//    }
+//    // 执行 gradle lint 命令即可运行 lint 检查，默认生成的报告在 outputs/lint-results.html 中
+//    lintOptions {
+//        // 遇到 lint 检查错误会终止构建，一般设置为 false
+//        abortOnError false
+//        // 将警告当作错误来处理（老版本：warningAsErros）
+//        warningsAsErrors false
+//        // 检查新 API
+//        check 'NewApi'
+//    }
+}
+//
+//repositories {
+//    flatDir {
+//        dirs 'libs'
+//        dirs '../common/libs', 'libs'
 //    }
 //}
 
+
 dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+//    support.each { k, v -> implementation v }
+
+    implementation project(path: ':commonl')
+    implementation project(path: ':goodsmodule')
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.3.0'
@@ -58,4 +213,60 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
+    //implementation  'com.lcm.library:mylibraryone:1.0.1'
+
+    testImplementation test.junit
+    androidTestImplementation test.ext
+    androidTestImplementation test.espresso
+
+    // ARouter路由器框架
+    api 'com.alibaba:arouter-api:1.5.2'
+    annotationProcessor 'com.alibaba:arouter-compiler:1.5.2'
+   // api "${rootProject.ext.arch.libraryHttp}"
+    api 'com.contrarywind:Android-PickerView:4.1.9'
 }
+
+
+//android {
+//    compileSdk 32
+//
+//    defaultConfig {
+//        applicationId "com.example.componentialdemo"
+//        minSdk 22
+//        targetSdk 32
+//        versionCode 1
+//        versionName "1.0"
+//
+//        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+//    }
+//
+//    buildTypes {
+//        release {
+//            minifyEnabled false
+//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+//        }
+//    }
+//    compileOptions {
+//        sourceCompatibility JavaVersion.VERSION_1_8
+//        targetCompatibility JavaVersion.VERSION_1_8
+//    }
+//    kotlinOptions {
+//        jvmTarget = '1.8'
+//    }
+//    buildFeatures {
+//        viewBinding true
+//    }
+//}
+
+//afterEvaluate {
+//    task zip(type : zip) {
+////        archiveName "outputs2.zip"// 输出的文件名字
+////        destinationDir file("${buildDir}/custom")// 输出的文件存放的文件夹
+////        from tasks.getByName("packageDebug").outputs.files// 输入的文件
+////        tasks.getByName("packageDebug").outputs.files.each {
+////            println it
+////        }
+//    }
+//}
+

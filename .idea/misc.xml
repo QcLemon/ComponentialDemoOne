@@ -4,8 +4,10 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/ASTestApp/ComponentialDemo/app/src/main/res/layout/activity_main.xml" value="0.3536458333333333" />
+        <entry key="..\:/ASTestApp/ComponentialDemo/app/src/main/res/layout/fragment_dashboard.xml" value="0.20008550662676358" />
         <entry key="..\:/ASTestApp/ComponentialDemo/app/src/main/res/layout/fragment_home.xml" value="0.21350861287398004" />
         <entry key="..\:/ASTestApp/ComponentialDemo/app/src/main/res/layout/fragment_nav.xml" value="0.21350861287398004" />
+        <entry key="..\:/ASTestApp/ComponentialDemo/commonl/src/main/res/layout/activity_common_lactivity.xml" value="0.21441523118767" />
       </map>
     </option>
   </component>
