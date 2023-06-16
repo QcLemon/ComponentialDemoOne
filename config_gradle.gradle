@@ -9,7 +9,7 @@ ext {
     androidId = [
             compileSdkVersion: 31,
             buildToolsVersion: "30.0.0",
-            minSdkVersion    : 21,
+            minSdkVersion    : 22,
             targetSdkVersion : 31,
             versionCode      : 1,
             versionName      : "1.0"
@@ -41,9 +41,9 @@ ext {
 
     //签名文件
     signing = [
-            "storeFile"    : "../debug.keystore",
-            "storePassword": "android",
-            "keyAlias"     : "androiddebugkey",
-            "keyPassword"  : "android"
+            "storeFile"    : "../sgb.jks",
+            "storePassword": "zjkj0719",
+            "keyAlias"     : "key0",
+            "keyPassword"  : "zjkj0719"
     ]
 }

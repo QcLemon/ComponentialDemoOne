@@ -7,7 +7,7 @@ pluginManagement {
 //            url="D://ASTestApp//ComponentialDemo//repository"
 //        }
         maven { url 'https://jitpack.io' }
-        maven { url 'https://maven.aliyun.com/repository/public' }
+    //    maven { url 'https://maven.aliyun.com/repository/public' }
     }
 }
 dependencyResolutionManagement {
@@ -19,7 +19,7 @@ dependencyResolutionManagement {
 //            url="D://ASTestApp//ComponentialDemo//repository"
 //        }
         maven { url 'https://jitpack.io' }
-        maven { url 'https://maven.aliyun.com/repository/public' }
+       // maven { url 'https://maven.aliyun.com/repository/public' }
     }
 }
 

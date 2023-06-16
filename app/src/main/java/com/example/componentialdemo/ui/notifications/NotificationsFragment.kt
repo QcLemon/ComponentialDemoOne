@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.alibaba.android.arouter.launcher.ARouter
 import com.example.componentialdemo.databinding.FragmentNotificationsBinding
 
 class NotificationsFragment : Fragment() {
@@ -32,6 +33,10 @@ class NotificationsFragment : Fragment() {
         notificationsViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
+        binding.btnNav.setOnClickListener {
+            ARouter.getInstance().build("/goodsmodule/GoodsMainActivity").navigation()
+        }
+        //"/goodsmodule/GoodsMainActivity"
         return root
     }
 

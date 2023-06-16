@@ -2,7 +2,9 @@ plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
  //   id 'maven-publish'
+    id 'kotlin-kapt'
 }
+
 
 android {
     compileSdk 32
@@ -19,11 +21,11 @@ android {
         multiDexEnabled true
 
         // 省略其他部分
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = [ moduleName : project.getName() ]
-            }
-        }
+//        javaCompileOptions {
+//            annotationProcessorOptions {
+//                arguments = [AROUTER_MODULE_NAME : project.getName()]
+//            }
+//        }
     }
 
     buildTypes {
@@ -73,6 +75,12 @@ android {
     }
 }
 
+kapt {
+    arguments {
+        arg("AROUTER_MODULE_NAME", project.getName())
+    }
+}
+
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.7.0'
@@ -85,9 +93,10 @@ dependencies {
 
     // ARouter路由器框架
     api 'com.alibaba:arouter-api:1.5.2'
-    annotationProcessor 'com.alibaba:arouter-compiler:1.5.2'
+//    annotationProcessor 'com.alibaba:arouter-compiler:1.5.2'
+    kapt 'com.alibaba:arouter-compiler:1.5.2'
   //  api "${rootProject.ext.arch.libraryHttp}"
-    api 'com.contrarywind:Android-PickerView:4.1.9'
+  //  api 'com.contrarywind:Android-PickerView:4.1.9'
 }
 
 ////上传源码对应的task

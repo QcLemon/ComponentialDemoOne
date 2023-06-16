@@ -14,7 +14,7 @@ class CommonLActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_common_lactivity)
-
+        ARouter.init(application)
         ARouter.getInstance().inject(this)
     }
 

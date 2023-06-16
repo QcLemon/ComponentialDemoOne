@@ -10,6 +10,27 @@ def appId = rootProject.ext.appId
 def url = rootProject.ext.url
 def signing = rootProject.ext.signing
 
+subprojects {
+    buildTypes {
+        debug {
+            android.applicationVariants.all { variant ->
+                variant.outputs.all {
+                    // Create a unique output file name
+                    def outputFile = new File(
+                            "$buildDir/outputs/apk/${variant.applicationId}-${variant.versionName}-${variant.versionCode}-debug-mergedManifest.xml")
+                    // Write the merged manifest to the output file
+                    outputFileName = "debug_manifest.xml"
+                    doLast {
+                        copy {
+                            from variant.mergeManifests
+                            to outputFile
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 android {
     compileSdkVersion androidId.compileSdkVersion
     buildToolsVersion androidId.buildToolsVersion
@@ -23,17 +44,14 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        multiDexEnabled true
-
         //manifestPlaceholders = [manifestApplicationId: "com.example.componentialdemo"]
 
         // 省略其他部分
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = [moduleName: project.getName()]
+                arguments = [AROUTER_MODULE_NAME: project.getName()]
             }
         }
-
     }
 
 //    sourceSets {
@@ -102,6 +120,7 @@ android {
 
     }
 
+
     buildTypes {
         debug {
             debuggable true
@@ -130,8 +149,6 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
-
 
     // AdbOptions 可以对 adb 操作选项添加配置
     adbOptions {
@@ -203,7 +220,7 @@ dependencies {
     implementation project(path: ':goodsmodule')
 
     implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.3.0'
+ //   implementation 'androidx.appcompat:appcompat:1.3.0'
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
@@ -224,7 +241,7 @@ dependencies {
     api 'com.alibaba:arouter-api:1.5.2'
     annotationProcessor 'com.alibaba:arouter-compiler:1.5.2'
    // api "${rootProject.ext.arch.libraryHttp}"
-    api 'com.contrarywind:Android-PickerView:4.1.9'
+   // api 'com.contrarywind:Android-PickerView:4.1.9'
 }
 
 

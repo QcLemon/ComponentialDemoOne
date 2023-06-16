@@ -29,12 +29,13 @@ class DashboardFragment : Fragment() {
         _binding = FragmentDashboardBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        ARouter.getInstance().inject(this)
         val textView: TextView = binding.textDashboard
         dashboardViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
         binding.btnNav.setOnClickListener {
-            ARouter.getInstance().build("/commonl/CommonLActivity").navigation()
+            ARouter.getInstance().build("/commonl/CommonLActivity").withString("orderId", "aaa").navigation()
         }
         return root
     }
