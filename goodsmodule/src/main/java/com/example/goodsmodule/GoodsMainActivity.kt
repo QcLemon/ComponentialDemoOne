@@ -7,6 +7,7 @@ import com.alibaba.android.arouter.launcher.ARouter
 
 @Route(path = "/goodsmodule/GoodsMainActivity")
 class GoodsMainActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.goods_activity_goods_main)
