@@ -97,7 +97,35 @@ dependencies {
     kapt 'com.alibaba:arouter-compiler:1.5.2'
   //  api "${rootProject.ext.arch.libraryHttp}"
   //  api 'com.contrarywind:Android-PickerView:4.1.9'
+    implementation "androidx.datastore:datastore:1.0.0"
+
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
+
+    implementation "androidx.datastore:datastore-preferences-core:1.0.0"
+
+    implementation "androidx.datastore:datastore-core:1.0.0"
 }
+
+//protobuf {
+//    protoc {
+//        artifact = 'com.google.protobuf:protoc:3.17.3'
+//    }
+//    plugins {
+//        javalite {
+//            artifact = 'com.google.protobuf:protoc-gen-javalite:3.17.3'
+//        }
+//    }
+//    generateProtoTasks {
+//        all().each { task ->
+//            task.builtins {
+//                remove java { }
+//            }
+//            task.plugins {
+//                javalite { }
+//            }
+//        }
+//    }
+//}
 
 ////上传源码对应的task
 //task generateSourcesJar(type: Jar) {
