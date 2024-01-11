@@ -23,9 +23,21 @@
         android:layout_height="wrap_content"
         android:textSize="25sp"
         app:layout_constraintTop_toBottomOf="@id/btn_nav"
-        android:text="用户名："
+        android:text="p用户名："
         android:textColor="#EF4033"
         android:layout_marginTop="180dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_datastore3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="25sp"
+        app:layout_constraintTop_toBottomOf="@id/btn_nav"
+        android:text="sp用户名："
+        android:textColor="#EF4033"
+        android:layout_marginTop="230dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

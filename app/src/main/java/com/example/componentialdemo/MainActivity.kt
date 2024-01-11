@@ -2,6 +2,7 @@ package com.example.componentialdemo
 
 import android.R.attr.value
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.core.DataStore
@@ -41,6 +42,11 @@ class MainActivity : AppCompatActivity() {
         PreferencesDataStore(this.dataStore)
     }
 
+    val sp by lazy {
+        this.getSharedPreferences("haha", 0)
+    }
+
+    lateinit var editr: SharedPreferences.Editor
     //34
 //    val multiProcessDataStore by lazy {
 //        ProtoDataStore(MultiProcessDataStoreFactory.create(
@@ -72,6 +78,7 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
+        editr = sp.edit()
 
         binding.btnNav.setOnClickListener {
             ARouter.getInstance().build("/commonl/CommonLActivity").withString("orderId", "aaa").navigation()
@@ -86,6 +93,12 @@ class MainActivity : AppCompatActivity() {
 
         initPreferencesData()
         initProtoData()
+    }
+
+    fun initSp() {
+        editr.putString("spp", "hahah")
+        editr.commit()
+        sp.getString("spp", "")
     }
 
     fun initMMkv() {
