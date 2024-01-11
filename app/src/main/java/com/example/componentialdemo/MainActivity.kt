@@ -5,6 +5,7 @@ import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.core.DataStore
+import androidx.datastore.dataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.lifecycleScope
@@ -15,19 +16,39 @@ import androidx.navigation.ui.setupWithNavController
 import com.alibaba.android.arouter.launcher.ARouter
 import com.example.commonl.PreferencesDataStore
 import com.example.componentialdemo.databinding.ActivityMainBinding
+import com.example.componentialdemo.ui.ProtoDataStore
+import com.example.componentialdemo.ui.SettingsSerializer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
+import java.io.File
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user")
+
+val Context.settingsDataStore: DataStore<UserSettings> by dataStore(
+    fileName = "settings.pb",
+    serializer = SettingsSerializer
+)
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     private val preferencesDataStore by lazy {
         PreferencesDataStore(this.dataStore)
+    }
+
+    //34
+//    val multiProcessDataStore by lazy {
+//        ProtoDataStore(MultiProcessDataStoreFactory.create(
+//            serializer = SettingsSerializer,
+//            produceFile = { File("settings.pb") }
+//        ))
+//    }
+
+    private val protoDataStore by lazy {
+        ProtoDataStore(this.settingsDataStore)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,38 +75,81 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnConfirm.setOnClickListener {
-            updateUserName(binding.edDatastore.text.toString())
-            initData()
+            updatePreferencesUserName(binding.edDatastore.text.toString())
+            updateProtoUserName(binding.edDatastore.text.toString())
+            initPreferencesData()
+            initProtoData()
         }
 
-        initData()
+        initPreferencesData()
+        initProtoData()
     }
 
-    fun initData() {
+    fun initPreferencesData() {
         // 获取用户名的示例
         lifecycleScope.launch {
             withContext(Dispatchers.Main) {
                 preferencesDataStore.userNameFlow.collect {
-                               // 在此处处理用户名数据
-                    binding.tvDatastore.text = "用户名：" + it
+                    // 在此处处理用户名数据
+                    binding.tvDatastore.text = "preferences用户名：" + it
+                }
+            }
+
+            withContext(Dispatchers.Main) {
+                delay(520)
+                preferencesDataStore.userNameFlow.collect {
+                    // 在此处处理用户名数据
+                    binding.tvDatastore.text = "preferences用户名：520 s" + it
+                }
+            }
+        }
+    }
+
+    fun initProtoData() {
+        // 获取用户名的示例
+        lifecycleScope.launch {
+            withContext(Dispatchers.Main) {
+                protoDataStore.userNameFlow.collect {
+                    // 在此处处理用户名数据
+                    binding.tvDatastore2.text = "proto用户名：" + it
                 }
             }
         }
     }
 
     // 更新用户名的示例
-    fun updateUserName(username: String) {
+    fun updatePreferencesUserName(username: String) {
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
                 preferencesDataStore.updateUserName(username)
             }
             withContext(Dispatchers.IO) {
-                delay(50L)
+                delay(500L)
                 preferencesDataStore.updateUserName(username + "50")
             }
             withContext(Dispatchers.IO) {
-                delay(100L)
+                delay(1000L)
                 preferencesDataStore.updateUserName(username + "100")
+            }
+        }
+    }
+
+    // 更新用户名的示例
+    fun updateProtoUserName(username: String) {
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                protoDataStore.updateUserName(username)
+            }
+            withContext(Dispatchers.IO) {
+                protoDataStore.updateUserName(username)
+            }
+            withContext(Dispatchers.IO) {
+                delay(50L)
+                protoDataStore.updateUserName(username + "50")
+            }
+            withContext(Dispatchers.IO) {
+                delay(100L)
+                protoDataStore.updateUserName(username + "100")
             }
         }
     }
