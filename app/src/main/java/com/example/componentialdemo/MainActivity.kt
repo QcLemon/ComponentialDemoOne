@@ -1,8 +1,8 @@
 package com.example.componentialdemo
 
+import android.R.attr.value
 import android.content.Context
 import android.os.Bundle
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
@@ -18,12 +18,14 @@ import com.example.commonl.PreferencesDataStore
 import com.example.componentialdemo.databinding.ActivityMainBinding
 import com.example.componentialdemo.ui.ProtoDataStore
 import com.example.componentialdemo.ui.SettingsSerializer
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.tencent.mmkv.MMKV
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
+
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user")
 
@@ -54,6 +56,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        MMKV.initialize(application)
    //     ARouter.init(application)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -83,6 +86,16 @@ class MainActivity : AppCompatActivity() {
 
         initPreferencesData()
         initProtoData()
+    }
+
+    fun initMMkv() {
+        val mmkv = MMKV.defaultMMKV()
+        mmkv?.encode("key", "value") // 存储数据，value可以是 boolean、int、float、double、String等类型
+//        val result = mmkv!!.decodeBool("key") // 读取布尔值
+//
+//        val result = mmkv!!.decodeInt("key") // 读取整数
+//
+//        val result = mmkv!!.decodeFloat("key") // 读取浮点数
     }
 
     fun initPreferencesData() {
